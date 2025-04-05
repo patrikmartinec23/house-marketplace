@@ -1,0 +1,27 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import svgr from 'vite-plugin-svgr';
+
+export default defineConfig({
+    plugins: [
+        react(),
+        svgr({
+            exportAsDefault: true,
+            svgrOptions: {
+                icon: true,
+                svgoConfig: {
+                    plugins: [
+                        {
+                            name: 'preset-default',
+                            params: {
+                                overrides: {
+                                    removeViewBox: false,
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
+        }),
+    ],
+});
