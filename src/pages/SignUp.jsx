@@ -1,5 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    updateProfile,
+} from 'firebase/auth';
+import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase.config';
+import { toast } from 'react-toastify';
+import OAuth from '../components/OAuth';
 import ArrowRightIcon from '../assets/svg/keyboardArrowRightIcon.svg?react';
 import visibilityIcon from '../assets/svg/visibilityIcon.svg';
 
@@ -21,6 +30,36 @@ function SignUp() {
         }));
     };
 
+    const onSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const auth = getAuth();
+
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            const user = userCredential.user;
+
+            updateProfile(auth.currentUser, {
+                displayName: name,
+            });
+
+            const formDataCopy = { ...formData };
+            delete formDataCopy.password;
+            formDataCopy.timestamp = serverTimestamp();
+
+            await setDoc(doc(db, 'users', user.uid), formDataCopy);
+
+            navigate('/');
+        } catch (error) {
+            toast.error('Something Went Wrong. Please Try Again Later');
+        }
+    };
+
     return (
         <>
             <div className="pageContainer">
@@ -29,7 +68,7 @@ function SignUp() {
                 </header>
 
                 <main>
-                    <form>
+                    <form onSubmit={onSubmit}>
                         <input
                             type="text"
                             className="nameInput"
@@ -68,12 +107,17 @@ function SignUp() {
                             />
                         </div>
 
-                        <Link
-                            to="/forgot-password"
-                            className="forgotPasswordLink"
-                        >
-                            Forgot Password
-                        </Link>
+                        <div className="groupLinks">
+                            <Link to="/sign-in" className="registerLink">
+                                Sign In Instead
+                            </Link>
+                            <Link
+                                to="/forgot-password"
+                                className="forgotPasswordLink"
+                            >
+                                Forgot Password
+                            </Link>
+                        </div>
 
                         <div className="signUpBar">
                             <p className="signUpText">Sign Up</p>
@@ -87,10 +131,7 @@ function SignUp() {
                         </div>
                     </form>
 
-                    {/* Google OAuth */}
-                    <Link to="/sign-in" className="registerLink">
-                        Sign In Instead
-                    </Link>
+                    <OAuth />
                 </main>
             </div>
         </>
