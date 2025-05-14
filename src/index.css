@@ -264,7 +264,8 @@ button {
 }
 
 .socialLogin {
-    margin-top: 0rem;
+    margin-top: 0.5rem;
+    margin-bottom: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
