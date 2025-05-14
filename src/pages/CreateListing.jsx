@@ -94,9 +94,7 @@ function CreateListing() {
 
         if (geoLocationEnabled) {
             const response = await fetch(
-                `http://localhost:5000/api/geocode?address=${encodeURIComponent(
-                    address
-                )}`
+                `/api/geocode?address=${encodeURIComponent(address)}`
             );
 
             const data = await response.json();
