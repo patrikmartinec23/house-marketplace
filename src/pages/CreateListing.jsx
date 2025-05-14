@@ -98,6 +98,7 @@ function CreateListing() {
                     address
                 )}`
             );
+
             const data = await response.json();
 
             geolocation.lat = data.results[0]?.geometry.location.lat ?? 0;
